@@ -77,7 +77,7 @@ int main(){
   for (int i = 0; i < str.size(); i++){
     to_encrypt.push_back(str[i]-96);
     //cout<<to_encrypt[i];
-    number = number*10 + to_encrypt[i];
+    number = number*100 + to_encrypt[i];
   }
   cout<<"converted to number: "<<number<<endl;
   long long int encrypted_data = 1;
