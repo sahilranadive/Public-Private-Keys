@@ -51,15 +51,51 @@ int modInverse(int a, int m)
           return x;
 }
 
+long long moduloMultiplication(long long a,
+                               long long b,
+                               long long mod)
+{
+    long long res = 0;  // Initialize result
+
+    // Update a if it is more than
+    // or equal to mod
+    a %= mod;
+
+    while (b)
+    {
+        // If b is odd, add a with result
+        if (b & 1)
+            res = (res + a) % mod;
+
+        // Here we assume that doing 2*a
+        // doesn't cause overflow
+        a = (2 * a) % mod;
+
+        b >>= 1;  // b = b / 2
+    }
+
+    return res;
+}
+
 int main(){
   srand(time(0));
-  int test1 = rand()%98 +10;
-  int test2 = rand()%98 +10;
-  int test3 = rand()%6 + 2;
-  int p1 = generatePrime(test1);
-  int p2 = generatePrime(test2);
+  string str;
+  cin>>str;
+  vector<int> to_encrypt;
+  long long int number = 0;
+  for (int i = 0; i < str.size(); i++){
+    to_encrypt.push_back(str[i]-96);
+    //cout<<to_encrypt[i];
+  number = number*100 + to_encrypt[i];
+  }
+  cout<<"converted to number: "<<number<<endl;
+  long long int test1 = rand()%98 + pow(10,str.size());
+  long long int test2 = rand()%98 +pow(10,str.size());
+  long long int test3 = rand()%6 + 2;
+  long long int p1 = generatePrime(test1);
+  long long int p2 = generatePrime(test2);
   cout<<"first number: "<<p1<<"\n"<<"second number: "<<p2<<endl;
-  int a_for_public = p1*p2;
+  long long int a_for_public = p1*p2;
   int phi_for_private = lcm(p1-1,p2-1);
   int b_for_public = generateSmall(test3,phi_for_private);
 
@@ -70,29 +106,22 @@ int main(){
 
   cout<<"phi_for_private:"<<phi_for_private<<"\t"<<"d_for_private:"<<d_for_private<<endl;
 
-  string str;
-  cin>>str;
-  vector<int> to_encrypt;
-  int number = 0;
-  for (int i = 0; i < str.size(); i++){
-    to_encrypt.push_back(str[i]-96);
-    //cout<<to_encrypt[i];
-    number = number*100 + to_encrypt[i];
-  }
-  cout<<"converted to number: "<<number<<endl;
   long long int encrypted_data = 1;
   for(int i = 0; i < b_for_public; i++){
-    encrypted_data = encrypted_data*number;
-    encrypted_data = encrypted_data%a_for_public;}
+    encrypted_data = moduloMultiplication(encrypted_data,number,a_for_public);
+    //cout<<encrypted_data<<endl;
+    //encrypted_data = encrypted_data%a_for_public;
+  }
   cout<<"encrypted_data: "<<encrypted_data<<endl;
 
   long long int decrypted_data = 1;
   long long int multiplier = encrypted_data;
   for(int i = 0; i < d_for_private; i++){
-    decrypted_data = decrypted_data*multiplier;
-    decrypted_data = decrypted_data%a_for_public;
+    decrypted_data = moduloMultiplication(decrypted_data,multiplier,a_for_public);
+    //decrypted_data = decrypted_data%a_for_public;
     //cout<<decrypted_data<<endl;
   }
+  //decrypted_data = decrypted_data*multiplier;
   cout<<"decrypted_data: "<<decrypted_data<<endl;
 
 }
